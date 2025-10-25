@@ -1,6 +1,9 @@
 import requests
 import os
 from dotenv import load_dotenv
+from datetime import datetime
+import json
+
 load_dotenv()
 
 CHANNEL_HANDLE = "MrBeast"
@@ -71,6 +74,12 @@ def extract_video_data(video_ids):
         return extracted_data
     except requests.exceptions.RequestException as e:
         raise e
+    
+def save_to_json(extracted_data):
+    file_path = f"./data/video_data_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+    
+    with open(file_path, 'w') as json_outfile:
+        json.dump(extracted_data, json_outfile, indent=4, ensure_ascii=False)
 
 if __name__ == "__main__":
     if not API_KEY:
@@ -78,4 +87,4 @@ if __name__ == "__main__":
     playlist_id = get_playlist_id()
     video_ids = get_video_id(playlist_id)
     video_data = extract_video_data(video_ids)
-    print(video_data)
+    save_to_json(video_data)
